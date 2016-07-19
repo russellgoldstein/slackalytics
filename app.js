@@ -4,6 +4,10 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var qs = require('querystring');
 
+var chatting = false;
+var lastChat = new Date();
+var numMessages;
+
 //set up heroku environment variables
 var env_var = {
 	ga_key: process.env.GOOGLE_ANALYTICS_UAID
@@ -25,7 +29,15 @@ app.get('/', function(req, res){
 });
 
 app.post('/collect', function(req, res){
-
+	chatting = true;
+	if((lastChat.getTime()/1000) - (new Date()/1000) < 5){
+		console.log("new chat less than 5 seconds, now at " + numMessages);
+		numMessages++;
+	}else{
+		console.log("new chat greater than 5 seconds");
+		numMessages = 0;
+	}
+	lastChat = new Date();
 	var channel = {
 		id: 	req.body.channel_id,
 		name: 	req.body.channel_name
