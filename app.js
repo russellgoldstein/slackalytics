@@ -61,13 +61,15 @@ app.post('/collect', function(req, res){
 			console.log("new chatter, sending post request");
 			var users = "";
 			for(user in channelObj.usersHash){
-				users += usersHash[user] +", ";
+				users += user +", ";
 			}
+			console.log("users: " + users);
 			users = users.substring(0, users.length-2);
+			console.log("msg: " + "<!channel> we got a lot of chatter going on in "+channel.name+" from " + users);
 			request({
 				url:'https://hooks.slack.com/services/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',
 				method: 'POST',
-				json: {"text": "<!channel> we got a lot of chatter going on here from " + users}
+				json: {"text": "<!channel> we got a lot of chatter going on in "+channel.name+" from " + users}
 				
 			}, function(error, response, body){
 			    if(error) {
