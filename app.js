@@ -33,6 +33,14 @@ app.post('/collect', function(req, res){
 	if((new Date()/1000) - (lastChat.getTime()/1000) < 5){
 		console.log("new chat less than 5 seconds, now at " + numMessages);
 		numMessages++;
+		
+		if(numMessages > 5){
+			//Make Post Request	
+			request.post({url:"https://hooks.slack.com/services/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", formData: payload={"text": "@channel we got a lot of chatter going on!"}}, 
+				function(error, resp, body){
+				console.log(error);
+			})
+		}
 	}else{
 		console.log("new chat greater than 5 seconds");
 		numMessages = 0;
@@ -73,38 +81,9 @@ app.post('/collect', function(req, res){
 	var elipseCount = searchM(/\.\.\./g);
 
 
-	//Structure Data
-	var data = {
-		v: 		1,
-		tid: 	env_var.ga_key,
-		cid: 	user.id,
-		ds:  	"slack", //data source
-		cs: 	"slack", // campaign source
-		cd1: 	user.id,
-		cd2: 	channel.name,
-		cd3: 	msgText,
-		cm1: 	wordCount,
-		cm2: 	emojiCount,
-		cm3: 	exclaCount,
-	//	cm4: 	letterCount,
-		cm5: 	elipseCount, 
-		cm6: 	questionMark, //need to set up in GA
-		dh:		teamDomain+".slack.com",
-		dp:		"/"+channel.name,
-		dt:		"Slack Channel: "+channel.name,
-		t: 		"event",
-		ec: 	"slack: "+ channel.name + "|" + channel.id,
-		ea: 	"post by " + user.id,
-		el: 	msgText,
-		ev: 	1 
-	};
 	console.log(JSON.stringify(data));
 	console.log(req.body);
-	//Make Post Request	
-	request.post("https://www.google-analytics.com/collect?" + qs.stringify(data), 
-		function(error, resp, body){
-		console.log(error);
-	})
+	
 	res.send("OK")
 });
 
