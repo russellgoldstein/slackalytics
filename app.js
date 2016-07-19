@@ -6,7 +6,7 @@ var qs = require('querystring');
 
 var chatting = false;
 var lastChat = new Date();
-var numMessages;
+var numMessages = 0;
 
 //set up heroku environment variables
 var env_var = {
@@ -30,7 +30,7 @@ app.get('/', function(req, res){
 
 app.post('/collect', function(req, res){
 	chatting = true;
-	if((lastChat.getTime()/1000) - (new Date()/1000) < 5){
+	if((new Date()/1000) - (lastChat.getTime()/1000) < 5){
 		console.log("new chat less than 5 seconds, now at " + numMessages);
 		numMessages++;
 	}else{
