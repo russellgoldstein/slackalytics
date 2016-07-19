@@ -51,7 +51,7 @@ app.post('/collect', function(req, res){
 			        console.log(response.statusCode, body);
 			}
 			});
-			lastSend = newDate();
+			lastSend = new Date();
 		}
 	}else{
 		console.log("new chat greater than 5 seconds");
