@@ -38,17 +38,18 @@ app.post('/collect', function(req, res){
 	};
 	var user = {
 		id: 	req.body.user_id
+		name:	req.body.user_name
 	};
 	
 	var channelObj = channels[channel.id];
 	if(channelObj == null){
-		channelObj = {lastChat: new Date(), lastSend: new Date(), numMessages: 1, users: [user.id]};
-	}else if(channelObj.users[channelObj.users.length-1] == user.id){
+		channelObj = {lastChat: new Date(), lastSend: new Date(), numMessages: 0, users: [user.name]};
+	}else if(channelObj.users[channelObj.users.length-1] == user.name){
 		// only add new user if the last message wasn't from the same user
-		console.log("user " + user.id + " sending consecutive messages...skipping");
+		console.log("user " + user.name + " sending consecutive messages...skipping");
 		return;
 	}else{
-		channelObj.users.push(user.id);
+		channelObj.users.push(user.name);
 	}
 	
 	if((new Date()/1000) - (channelObj.lastChat.getTime()/1000) < 20){
@@ -59,10 +60,15 @@ app.post('/collect', function(req, res){
 			channelObj.numMessages = 0;
 			//Make Post Request
 			console.log("new chatter, sending post request");
+			var users = "";
+			for(user in channelObj.users){
+				users += user +", ";
+			}
+			users = users.substring(0, users.length-2);
 			request({
 				url:'https://hooks.slack.com/services/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',
 				method: 'POST',
-				json: {"text": "<!channel> we got a lot of chatter going on!"}
+				json: {"text": "<!channel> we got a lot of chatter going on here from " + users}
 				
 			}, function(error, response, body){
 			    if(error) {
@@ -76,6 +82,7 @@ app.post('/collect', function(req, res){
 	}else{
 		console.log("new chat greater than 5 seconds");
 		channelObj.numMessages = 0;
+		channelObj.users = [];
 	}
 	channelObj.lastChat = new Date();
 	
