@@ -42,7 +42,7 @@ app.post('/collect', function(req, res){
 			request({
 				url:'https://hooks.slack.com/services/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',
 				method: 'POST',
-				json: {"text": "@channel we got a lot of chatter going on!"}
+				json: {"text": "<!everyone> we got a lot of chatter going on!"}
 				
 			}, function(error, response, body){
 			    if(error) {
