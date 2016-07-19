@@ -80,8 +80,6 @@ app.post('/collect', function(req, res){
 	var questionMark = searchM(/\?/g);
 	var elipseCount = searchM(/\.\.\./g);
 
-
-	console.log(JSON.stringify(data));
 	console.log(req.body);
 	
 	res.send("OK")
