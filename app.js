@@ -51,7 +51,7 @@ app.post('/collect', function(req, res){
 		channelObj.users.push(user.id);
 	}
 	
-	if((new Date()/1000) - (channelObj.lastChat.getTime()/1000) < 5){
+	if((new Date()/1000) - (channelObj.lastChat.getTime()/1000) < 20){
 		channelObj.numMessages = channelObj.numMessages + 1;
 		console.log("new chat less than 5 seconds, now at " + channelObj.numMessages);
 		
