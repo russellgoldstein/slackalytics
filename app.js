@@ -41,14 +41,14 @@ app.post('/collect', function(req, res){
 	var channelObj = channels[channel.name];
 	if(channelObj == null){
 		channelObj = {lastChat: new Date(), lastSend: new Date(), numMessages: 0, users: [user.name], usersHash:{}};
-		channelObj.usersHash[user.name] = user.name;
+		channelObj.usersHash[user.name] = user;
 	}else if(channelObj.users[channelObj.users.length-1] == user.name){
 		// only add new user if the last message wasn't from the same user
 		console.log("user " + user.name + " sending consecutive messages...skipping");
 		return;
 	}else{
 		channelObj.users.push(user.name);
-		channelObj.usersHash[user.name] = user.name;
+		channelObj.usersHash[user.name] = user;
 	}
 	
 	if((new Date()/1000) - (channelObj.lastChat.getTime()/1000) < 20){
@@ -61,7 +61,7 @@ app.post('/collect', function(req, res){
 			console.log("new chatter, sending post request");
 			var users = "";
 			for(user in channelObj.usersHash){
-				users += user +", ";
+				users += "<@"+user.id+"|"+user.name+">, ";
 			}
 			console.log("users: " + users);
 			users = users.substring(0, users.length-2);
@@ -69,7 +69,7 @@ app.post('/collect', function(req, res){
 			request({
 				url:'https://hooks.slack.com/services/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',
 				method: 'POST',
-				json: {"text": "<!channel> we got a lot of chatter going on in "+channel.name+" from " + users}
+				json: {"text": "<!channel> we got a lot of chatter going on in <#"+channel.id+"|"+channel.name+"> from " + users}
 				
 			}, function(error, response, body){
 			    if(error) {
