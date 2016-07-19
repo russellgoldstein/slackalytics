@@ -40,7 +40,7 @@ app.post('/collect', function(req, res){
 	
 	var channelObj = channels[channel.name];
 	if(channelObj == null){
-		channelObj = {lastChat: new Date(), lastSend: new Date(), numMessages: 0, users: [user.name], usersHash={}};
+		channelObj = {lastChat: new Date(), lastSend: new Date(), numMessages: 0, users: [user.name], usersHash:{}};
 		channelObj.usersHash[user.name] = user.name;
 	}else if(channelObj.users[channelObj.users.length-1] == user.name){
 		// only add new user if the last message wasn't from the same user
