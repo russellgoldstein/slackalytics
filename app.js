@@ -85,7 +85,7 @@ app.post('/collect', function(req, res){
 	}
 	channelObj.lastChat = new Date();
 	
-	channels[channel.id] = channelObj;
+	channels[channel.name] = channelObj;
 	
 	console.log(util.inspect(channels, {showHidden: false, depth: null}));
 
