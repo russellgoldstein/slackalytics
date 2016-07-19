@@ -36,7 +36,7 @@ app.post('/collect', function(req, res){
 		
 		if(numMessages > 5){
 			//Make Post Request	
-			request.post({url:"https://hooks.slack.com/services/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", formData: payload={"text": "@channel we got a lot of chatter going on!"}}, 
+			request.post("https://hooks.slack.com/services/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?payload={'text': '@channel we got a lot of chatter going on!'}", 
 				function(error, resp, body){
 				console.log(error);
 			})
