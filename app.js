@@ -31,11 +31,11 @@ app.get('/', function(req, res){
 
 app.post('/collect', function(req, res){
 	chatting = true;
-	if(((new Date()/1000) - (lastChat.getTime()/1000) < 5) && ((new Date()/1000) - (lastSend.getTime()/1000) > 120)){
+	if((new Date()/1000) - (lastChat.getTime()/1000) < 5){
 		console.log("new chat less than 5 seconds, now at " + numMessages);
 		numMessages++;
 		
-		if(numMessages > 5){
+		if(numMessages > 5 && ((new Date()/1000) - (lastSend.getTime()/1000) > 120)){
 			numMessages = 0;
 			//Make Post Request
 			console.log("new chatter, sending post request");
