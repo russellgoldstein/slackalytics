@@ -88,7 +88,7 @@ app.post('/collect', function(req, res){
 	
 	channels[channel.id] = channelObj;
 	
-	console.log(channels);
+	console.log("NEW CHANNELS" + channels);
 
 	console.log(req.body);
 	
