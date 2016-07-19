@@ -6,6 +6,7 @@ var qs = require('querystring');
 
 var chatting = false;
 var lastChat = new Date();
+var lastSend = new Date();
 var numMessages = 0;
 
 //set up heroku environment variables
@@ -30,14 +31,15 @@ app.get('/', function(req, res){
 
 app.post('/collect', function(req, res){
 	chatting = true;
-	if((new Date()/1000) - (lastChat.getTime()/1000) < 5){
+	if(((new Date()/1000) - (lastChat.getTime()/1000) < 5) && ((new Date()/1000) - (lastSend.getTime()/1000) > 120)){
 		console.log("new chat less than 5 seconds, now at " + numMessages);
 		numMessages++;
 		
 		if(numMessages > 5){
+			numMessages = 0;
 			//Make Post Request
 			console.log("new chatter, sending post request");
-			/*request({
+			/request({
 				url:'https://hooks.slack.com/services/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',
 				method: 'POST',
 				json: {"text": "@channel we got a lot of chatter going on!"}
@@ -48,7 +50,8 @@ app.post('/collect', function(req, res){
 			    } else {
 			        console.log(response.statusCode, body);
 			}
-			}); */
+			});
+			lastSend = newDate();
 		}
 	}else{
 		console.log("new chat greater than 5 seconds");
