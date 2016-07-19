@@ -4,14 +4,15 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var qs = require('querystring');
 
-var chatting = false;
 var lastChat = new Date();
 var lastSend = new Date();
 var numMessages = 0;
 
+var channels = {};
+
 //set up heroku environment variables
 var env_var = {
-	ga_key: process.env.GOOGLE_ANALYTICS_UAID
+	
 };
 
 //Server Details
@@ -30,13 +31,32 @@ app.get('/', function(req, res){
 });
 
 app.post('/collect', function(req, res){
-	chatting = true;
-	if((new Date()/1000) - (lastChat.getTime()/1000) < 5){
-		console.log("new chat less than 5 seconds, now at " + numMessages);
-		numMessages++;
+	
+	var channel = {
+		id: 	req.body.channel_id,
+		name: 	req.body.channel_name
+	};
+	var user = {
+		id: 	req.body.user_id
+	};
+	
+	var channelObj = channels[channel.id];
+	if(channelObj == null){
+		channelObj = {lastChat: new Date(), lastSend: new Date(), numMessages: 1, users: [user.id]};
+	}else if(channelObj.users[channelObj.users.length-1] == user.id){
+		// only add new user if the last message wasn't from the same user
+		console.log("user " + user.id + " sending consecutive messages...skipping");
+		res.send("OK");
+	}else{
+		channelObj.users.push(user.id);
+	}
+	
+	if((new Date()/1000) - (channelObj.lastChat.getTime()/1000) < 5){
+		channelObj.numMessages = channelObj.numMessages + 1;
+		console.log("new chat less than 5 seconds, now at " + channelObj.numMessages);
 		
-		if(numMessages > 5 && ((new Date()/1000) - (lastSend.getTime()/1000) > 120)){
-			numMessages = 0;
+		if(channelObj.numMessages > 5 && ((new Date()/1000) - (channelObj.lastSend.getTime()/1000) > 120)){
+			channelObj.numMessages = 0;
 			//Make Post Request
 			console.log("new chatter, sending post request");
 			request({
@@ -51,46 +71,17 @@ app.post('/collect', function(req, res){
 			        console.log(response.statusCode, body);
 			}
 			});
-			lastSend = new Date();
+			channelObj.lastSend = new Date();
 		}
 	}else{
 		console.log("new chat greater than 5 seconds");
-		numMessages = 0;
+		channelObj.numMessages = 0;
 	}
-	lastChat = new Date();
-	var channel = {
-		id: 	req.body.channel_id,
-		name: 	req.body.channel_name
-	};
-	var user = {
-		id: 	req.body.user_id
-	};
-	var msgText = req.body.text;
-	var teamDomain = req.body.team_domain;
-
-
-	function searchM(regex){
-		var searchStr = msgText.match(regex);
-		if(searchStr != null){
-			return searchStr.length;
-		}
-		return 0;
-	};
-
-	function searchS(regex){
-		var searchStr = msgText.split(regex);
-		if(searchStr != undefined){
-			return searchStr.length;
-		}
-		return 0;
-	};
-
-
-	var wordCount = searchS(/\s+\b/);
-	var emojiCount = searchM(/:[a-z_0-9]*:/g);
-	var exclaCount = searchM(/!/g);
-	var questionMark = searchM(/\?/g);
-	var elipseCount = searchM(/\.\.\./g);
+	channelObj.lastChat = new Date();
+	
+	channels[channel.id] = channelObj;
+	
+	console.log(channels);
 
 	console.log(req.body);
 	
