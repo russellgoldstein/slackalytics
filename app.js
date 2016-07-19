@@ -38,15 +38,17 @@ app.post('/collect', function(req, res){
 		name:	req.body.user_name
 	};
 	
-	var channelObj = channels[channel.id];
+	var channelObj = channels[channel.name];
 	if(channelObj == null){
-		channelObj = {lastChat: new Date(), lastSend: new Date(), numMessages: 0, users: [user.name]};
+		channelObj = {lastChat: new Date(), lastSend: new Date(), numMessages: 0, users: [user.name], usersHash={}};
+		channelObj.usersHash[user.name] = user.name;
 	}else if(channelObj.users[channelObj.users.length-1] == user.name){
 		// only add new user if the last message wasn't from the same user
 		console.log("user " + user.name + " sending consecutive messages...skipping");
 		return;
 	}else{
 		channelObj.users.push(user.name);
+		channelObj.usersHash[user.name] = user.name;
 	}
 	
 	if((new Date()/1000) - (channelObj.lastChat.getTime()/1000) < 20){
@@ -58,8 +60,8 @@ app.post('/collect', function(req, res){
 			//Make Post Request
 			console.log("new chatter, sending post request");
 			var users = "";
-			for(user in channelObj.users){
-				users += user +", ";
+			for(user in channelObj.usersHash){
+				users += usersHash[user] +", ";
 			}
 			users = users.substring(0, users.length-2);
 			request({
