@@ -3,10 +3,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
 var qs = require('querystring');
-
-var lastChat = new Date();
-var lastSend = new Date();
-var numMessages = 0;
+var util = require('util');
 
 var channels = {};
 
@@ -88,7 +85,7 @@ app.post('/collect', function(req, res){
 	
 	channels[channel.id] = channelObj;
 	
-	console.log("NEW CHANNELS" + channels);
+	console.log(util.inspect(channels, {showHidden: false, depth: null}));
 
 	console.log(req.body);
 	
