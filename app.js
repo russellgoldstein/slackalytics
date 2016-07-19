@@ -46,7 +46,7 @@ app.post('/collect', function(req, res){
 	}else if(channelObj.users[channelObj.users.length-1] == user.id){
 		// only add new user if the last message wasn't from the same user
 		console.log("user " + user.id + " sending consecutive messages...skipping");
-		res.send("OK");
+		return;
 	}else{
 		channelObj.users.push(user.id);
 	}
