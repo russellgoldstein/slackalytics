@@ -37,7 +37,7 @@ app.post('/collect', function(req, res){
 		name: 	req.body.channel_name
 	};
 	var user = {
-		id: 	req.body.user_id
+		id: 	req.body.user_id,
 		name:	req.body.user_name
 	};
 	
