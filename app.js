@@ -80,7 +80,7 @@ app.post('/collect', function(req, res){
 			channelObj.lastSend = new Date();
 		}
 	}else{
-		console.log("new chat greater than 5 seconds");
+		console.log("new chat greater than 20 seconds");
 		channelObj.numMessages = 0;
 		channelObj.users = [];
 	}
